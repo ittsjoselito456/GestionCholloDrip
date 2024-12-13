@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Agregar Pedido</h1>
+<form method="POST" id="addPedidoForm">
+    <div class="form-group">
+        <label for="cliente_nombre">Nombre Cliente</label>
+        <input type="text" class="form-control" id="cliente_nombre" name="cliente_nombre" placeholder="Buscar cliente..." required>
+        <input type="hidden" id="id_cliente" name="id_cliente">
+        <ul id="cliente_lista" class="list-group"></ul>
+    </div>
+    <div class="form-group">
+        <label for="producto_nombre">Nombre Producto</label>
+        <input type="text" class="form-control" id="producto_nombre" name="producto_nombre" placeholder="Buscar producto..." required>
+        <input type="hidden" id="id_producto" name="id_producto">
+        <ul id="producto_lista" class="list-group"></ul>
+    </div>
+    <div class="form-group">
+        <label for="cantidad">Cantidad</label>
+        <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+    </div>
+    <div class="form-group form-check">
+        <input type="checkbox" id="entregado" name="entregado">
+        <label for="entregado">Entregado</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Agregar Pedido</button>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const clienteInput = document.getElementById('cliente_nombre');
+    const clienteLista = document.getElementById('cliente_lista');
+    const idCliente = document.getElementById('id_cliente');
+
+    function buscarClientes(query) {
+        fetch(`/clientes/search?query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                clienteLista.innerHTML = '';
+                data.forEach(cliente => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+                    listItem.textContent = cliente.nombre;
+                    listItem.addEventListener('click', function() {
+                        clienteInput.value = cliente.nombre;
+                        idCliente.value = cliente.id_cliente;
+                        clienteLista.innerHTML = '';
+                    });
+                    clienteLista.appendChild(listItem);
+                });
+            });
+    }
+
+    clienteInput.addEventListener('input', function() {
+        const query = clienteInput.value;
+        buscarClientes(query);
+    });
+
+    // Inicializar la búsqueda con el campo vacío
+    buscarClientes('');
+
+    const productoInput = document.getElementById('producto_nombre');
+    const productoLista = document.getElementById('producto_lista');
+    const idProducto = document.getElementById('id_producto');
+
+    function buscarProductos(query) {
+        fetch(`/productos/search?query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                productoLista.innerHTML = '';
+                data.forEach(producto => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+                    listItem.textContent = producto.nombre;
+                    listItem.addEventListener('click', function() {
+                        productoInput.value = producto.nombre;
+                        idProducto.value = producto.id_producto;
+                        productoLista.innerHTML = '';
+                    });
+                    productoLista.appendChild(listItem);
+                });
+            });
+    }
+
+    productoInput.addEventListener('input', function() {
+        const query = productoInput.value;
+        buscarProductos(query);
+    });
+
+    // Inicializar la búsqueda con el campo vacío
+    buscarProductos('');
+
+    document.getElementById('addPedidoForm').addEventListener('submit', function(event) {
+        if (!idCliente.value || !idProducto.value) {
+            event.preventDefault();
+            alert('Por favor, seleccione un cliente y un producto de la lista.');
+        }
+    });
+});
+</script>
+{% endblock %}

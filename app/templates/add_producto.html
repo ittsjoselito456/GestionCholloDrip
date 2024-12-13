@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Agregar Producto</h1>
+<form method="POST">
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" class="form-control" id="nombre" name="nombre" required>
+    </div>
+    <div class="form-group">
+        <label for="precio_cliente">Precio Cliente</label>
+        <input type="number" step="0.01" class="form-control" id="precio_cliente" name="precio_cliente" required>
+    </div>
+    <div class="form-group">
+        <label for="precio_tienda">Precio Tienda</label>
+        <input type="number" step="0.01" class="form-control" id="precio_tienda" name="precio_tienda" required>
+    </div>
+    <div class="form-group">
+        <label for="telefono_proveedor">Teléfono Proveedor</label>
+        <input type="text" class="form-control" id="telefono_proveedor" name="telefono_proveedor" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Agregar Producto</button>
+</form>
+{% endblock %}

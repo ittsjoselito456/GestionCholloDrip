@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Lista de Productos</h1>
+<form method="POST" action="{{ url_for('main.list_productos') }}">
+    <input type="text" name="filtro" placeholder="Filtrar por nombre, precio cliente, precio tienda o teléfono proveedor">
+    <button type="submit">Filtrar</button>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Precio Cliente</th>
+            <th>Precio Tienda</th>
+            <th>Teléfono Proveedor</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for producto in productos %}
+        <tr>
+            <td>{{ producto.id_producto }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.precio_cliente }}</td>
+            <td>{{ producto.precio_tienda }}</td>
+            <td>{{ producto.telefono_proveedor }}</td>
+            <td>
+                <a href="{{ url_for('main.edit_producto', id=producto.id_producto) }}" class="btn btn-primary">Editar</a>
+                <form method="POST" action="{{ url_for('main.delete_producto', id=producto.id_producto) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

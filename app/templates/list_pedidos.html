@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Lista de Pedidos</h1>
+<form method="POST" action="{{ url_for('main.list_pedidos') }}">
+    <input type="text" name="filtro_cliente" placeholder="Filtrar por ID cliente">
+    <select name="filtro_entregado">
+        <option value="">Todos</option>
+        <option value="true">Entregados</option>
+        <option value="false">No Entregados</option>
+    </select>
+    <button type="submit">Filtrar</button>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>ID Cliente</th>
+            <th>ID Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Total Cliente</th>
+            <th>Precio Total Proveedor</th>
+            <th>Dirección</th>
+            <th>Ciudad</th>
+            <th>Provincia</th>
+            <th>País</th>
+            <th>Teléfono Cliente</th>
+            <th>Entregado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pedido in pedidos %}
+        <tr>
+            <td>{{ pedido.id_pedido }}</td>
+            <td>{{ pedido.id_cliente }}</td>
+            <td>{{ pedido.id_producto }}</td>
+            <td>{{ pedido.cantidad }}</td>
+            <td>{{ pedido.precio_total_cliente }}</td>
+            <td>{{ pedido.precio_total_proveedor }}</td>
+            <td>{{ pedido.direccion }}</td>
+            <td>{{ pedido.ciudad }}</td>
+            <td>{{ pedido.provincia }}</td>
+            <td>{{ pedido.pais }}</td>
+            <td>{{ pedido.telefono_cliente }}</td>
+            <td>
+                <input type="checkbox" data-id="{{ pedido.id_pedido }}" {% if pedido.entregado %}checked{% endif %}>
+            </td>
+            <td>
+                <form method="POST" action="{{ url_for('main.delete_pedido', id=pedido.id_pedido) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este pedido?');">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const idPedido = checkbox.getAttribute('data-id');
+            const entregado = checkbox.checked ? 1 : 0;
+            fetch(`/pedidos/update_entregado/${idPedido}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ entregado: entregado })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Estado de entrega actualizado exitosamente');
+                } else {
+                    alert('Error al actualizar el estado de entrega');
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
